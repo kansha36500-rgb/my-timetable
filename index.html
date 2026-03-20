@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>My 時間割</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body class="font-standard text-dark">
+
+  <!-- 背景レイヤー -->
+  <div id="bg-layer"></div>
+
+  <div id="app">
+
+    <!-- ===== 時間割エリア（スクショ対象） ===== -->
+    <div id="timetable-area">
+      <h1 class="site-title" id="title-display">My 時間割</h1>
+      <div class="timetable-grid" id="timetable-grid"></div>
+    </div>
+
+    <!-- ===== 設定パネル開閉ボタン ===== -->
+    <button id="settings-toggle-btn">⚙ 設定</button>
+
+    <!-- ===== 設定パネル ===== -->
+    <div id="settings-panel">
+
+      <!-- 出席番号 -->
+      <div class="setting-group">
+        <label for="student-number">出席番号</label>
+        <input type="number" id="student-number" min="1" max="37" placeholder="1〜37" />
+      </div>
+
+      <!-- タイトル編集 ★ 新規追加 -->
+      <div class="setting-group">
+        <label for="title-input">タイトル</label>
+        <input type="text" id="title-input" placeholder="例: 2年A組 時間割" maxlength="30" />
+      </div>
+
+      <!-- フォント選択 -->
+      <div class="setting-group">
+        <span class="setting-label">フォント</span>
+        <div class="font-options">
+          <button data-font="standard" class="active">標準</button>
+          <button data-font="smart">スマート</button>
+          <button data-font="cute">かわいい</button>
+        </div>
+      </div>
+
+      <!-- 背景設定 -->
+      <div class="setting-group">
+        <span class="setting-label">背景</span>
+        <div class="bg-options">
+          <input type="color" id="bg-color-picker" value="#c0d8f0" title="単色カラー" />
+          <label class="img-upload-label">
+            📷 画像を選択
+            <input type="file" id="bg-image-input" accept="image/*" />
+          </label>
+        </div>
+      </div>
+
+      <!-- 透け感スライダー -->
+      <div class="setting-group">
+        <label for="opacity-slider">透け感（セルの透明度）</label>
+        <input type="range" id="opacity-slider" min="0" max="100" value="35" />
+      </div>
+
+      <!-- アクションボタン -->
+      <div class="action-buttons">
+        <button id="save-image-btn">📥 画像として保存</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+
+  <script>
+  (() => {
+    "use strict";
+
+    // ---------- DOM ----------
+    const bgLayer         = document.getElementById("bg-layer");
+    const grid            = document.getElementById("timetable-grid");
+    const studentInput    = document.getElementById("student-number");
+    const titleInput      = document.getElementById("title-input");
+    const titleDisplay    = document.getElementById("title-display");
+    const fontButtons     = document.querySelectorAll(".font-options button");
+    const bgColorPicker   = document.getElementById("bg-color-picker");
+    const bgImageInput    = document.getElementById("bg-image-input");
+    const opacitySlider   = document.getElementById("opacity-slider");
+    const saveImageBtn    = document.getElementById("save-image-btn");
+    const settingsToggle  = document.getElementById("settings-toggle-btn");
+    const settingsPanel   = document.getElementById("settings-panel");
+    const timetableArea   = document.getElementById("timetable-area");
+
+    const DAYS = ["月", "火", "水", "木", "金"];
+    const MAX_PERIOD = 7;
+    const DEFAULT_TITLE = "My 時間割";
+
+    // ---------- State ----------
+    let state = {
+      studentNo: null,
+      font: "standard",
+      bgType: "color",
+      bgColor: "#c0d8f0",
+      bgImage: null,
+      opacity: 35,
+      title: DEFAULT_TITLE,    // ★ 新規
+    };
+
+    // ============================
+    //  時間割テーブルの描画
+    // ============================
+    function renderGrid() {
+      grid.innerHTML = "";
+
+      // ヘッダー行
+      const corner = document.createElement("div");
+      corner.className = "cell-header";
+      corner.textContent = "";
+      grid.appendChild(corner);
+
+      for (const day of DAYS) {
+        const dh = document.createElement("div");
+        dh.className = "cell-header";
+        dh.textContent = day;
+        grid.appendChild(dh);
+      }
+
+      // 各時限の行
+      for (let p = 1; p <= MAX_PERIOD; p++) {
+        const pl = document.createElement("div");
+        pl.className = "cell-period";
+        pl.innerHTML =
+          `<span class="period-num">${PERIODS[p - 1].label}</span>` +
+          `<span class="period-time">${PERIODS[p - 1].time}</span>`;
+        grid.appendChild(pl);
+
+        for (const day of DAYS) {
+          const maxP = DAY_PERIODS[day];
+
+          if (p > maxP) {
+            const empty = document.createElement("div");
+            empty.className = "cell-subject cell-empty";
+            grid.appendChild(empty);
+            continue;
+          }
+
+          const key = `${day}_${p}`;
+          let info = BASE_TIMETABLE[key];
+
+          if (info && state.studentNo && STUDENT_ELECTIVES[state.studentNo]) {
+            const electives = STUDENT_ELECTIVES[state.studentNo];
+            const subj = info.subject;
+            if (ELECTIVE_OPTIONS[subj] && electives[subj]) {
+              const chosen = electives[subj];
+              if (ELECTIVE_OPTIONS[subj][chosen]) {
+                info = ELECTIVE_OPTIONS[subj][chosen];
+              }
+            }
+          }
+
+          const cell = document.createElement("div");
+          cell.className = "cell-subject";
+
+          if (info) {
+            cell.innerHTML =
+              `<span class="subject-name">${info.subject}</span>` +
+              `<span class="subject-teacher">${info.teacher}</span>` +
+              `<span class="subject-room">${info.room}</span>`;
+          }
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    // ============================
+    //  タイトルの更新 ★ 新規
+    // ============================
+    function applyTitle() {
+      titleDisplay.textContent = state.title || DEFAULT_TITLE;
+    }
+
+    // ============================
+    //  背景の適用
+    // ============================
+    function applyBackground() {
+      if (state.bgType === "image" && state.bgImage) {
+        bgLayer.style.backgroundImage = `url('${state.bgImage}')`;
+        bgLayer.style.backgroundColor = "transparent";
+      } else {
+        bgLayer.style.backgroundImage = "none";
+        bgLayer.style.backgroundColor = state.bgColor;
+      }
+      updateTextColor();
+    }
+
+    // ============================
+    //  透け感
+    // ============================
+    function applyOpacity() {
+      const a = state.opacity / 100;
+      document.documentElement.style.setProperty(
+        "--glass-bg",
+        `rgba(255, 255, 255, ${a})`
+      );
+    }
+
+    // ============================
+    //  文字色の自動切り替え
+    // ============================
+    function updateTextColor() {
+      if (state.bgType === "image" && state.bgImage) {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const size = 50;
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, size, size);
+          const data = ctx.getImageData(0, 0, size, size).data;
+          let total = 0;
+          for (let i = 0; i < data.length; i += 4) {
+            total += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+          }
+          const avg = total / (size * size);
+          setTextClass(avg < 128 ? "light" : "dark");
+        };
+        img.src = state.bgImage;
+      } else {
+        const hex = state.bgColor.replace("#", "");
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+        setTextClass(luminance < 128 ? "light" : "dark");
+      }
+    }
+
+    function setTextClass(mode) {
+      document.body.classList.remove("text-light", "text-dark");
+      document.body.classList.add(`text-${mode}`);
+    }
+
+    // ============================
+    //  フォント切り替え
+    // ============================
+    function applyFont() {
+      document.body.classList.remove("font-standard", "font-smart", "font-cute");
+      document.body.classList.add(`font-${state.font}`);
+      fontButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.font === state.font);
+      });
+    }
+
+    // ============================
+    //  ローカルストレージ
+    // ============================
+    const LS_KEY = "myTimetableSettings";
+
+    function saveState() {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify(state));
+      } catch (e) { /* ignore */ }
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          state = { ...state, ...saved };
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    // ============================
+    //  スクリーンショット保存
+    // ============================
+    saveImageBtn.addEventListener("click", async () => {
+      timetableArea.classList.add("capturing");
+
+      const origBg = timetableArea.style.cssText;
+      if (state.bgType === "image" && state.bgImage) {
+        timetableArea.style.backgroundImage = `url('${state.bgImage}')`;
+        timetableArea.style.backgroundSize = "cover";
+        timetableArea.style.backgroundPosition = "center";
+      } else {
+        timetableArea.style.backgroundColor = state.bgColor;
+      }
+
+      const cells = timetableArea.querySelectorAll(
+        ".cell-header, .cell-period, .cell-subject, .site-title"
+      );
+      const a = state.opacity / 100;
+      cells.forEach((c) => {
+        c.style.background = `rgba(255,255,255,${a})`;
+      });
+
+      try {
+        const canvas = await html2canvas(timetableArea, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: null,
+        });
+        const link = document.createElement("a");
+        link.download = "my-timetable.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } catch (err) {
+        alert("画像の保存に失敗しました。もう一度お試しください。");
+        console.error(err);
+      }
+
+      timetableArea.style.cssText = origBg;
+      cells.forEach((c) => {
+        c.style.background = "";
+      });
+      timetableArea.classList.remove("capturing");
+    });
+
+    // ============================
+    //  イベントリスナー
+    // ============================
+    studentInput.addEventListener("change", () => {
+      const n = parseInt(studentInput.value, 10);
+      if (n >= 1 && n <= 37) {
+        state.studentNo = n;
+      } else {
+        state.studentNo = null;
+      }
+      renderGrid();
+      saveState();
+    });
+
+    // ★ タイトル変更
+    titleInput.addEventListener("input", () => {
+      state.title = titleInput.value || DEFAULT_TITLE;
+      applyTitle();
+      saveState();
+    });
+
+    fontButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.font = btn.dataset.font;
+        applyFont();
+        saveState();
+      });
+    });
+
+    bgColorPicker.addEventListener("input", () => {
+      state.bgType = "color";
+      state.bgColor = bgColorPicker.value;
+      state.bgImage = null;
+      applyBackground();
+      saveState();
+    });
+
+    bgImageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        state.bgType = "image";
+        state.bgImage = ev.target.result;
+        applyBackground();
+        saveState();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    opacitySlider.addEventListener("input", () => {
+      state.opacity = parseInt(opacitySlider.value, 10);
+      applyOpacity();
+      saveState();
+    });
+
+    settingsToggle.addEventListener("click", () => {
+      settingsPanel.classList.toggle("open");
+      settingsToggle.textContent = settingsPanel.classList.contains("open")
+        ? "✕ 閉じる"
+        : "⚙ 設定";
+    });
+
+    // ============================
+    //  初期化
+    // ============================
+    function init() {
+      loadState();
+
+      if (state.studentNo) studentInput.value = state.studentNo;
+      titleInput.value = state.title === DEFAULT_TITLE ? "" : state.title;
+      bgColorPicker.value = state.bgColor;
+      opacitySlider.value = state.opacity;
+
+      applyTitle();
+      applyFont();
+      applyBackground();
+      applyOpacity();
+      renderGrid();
+    }
+
+    init();
+  })();
+  </script>
+
+</body>
+</html>

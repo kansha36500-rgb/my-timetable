@@ -1,0 +1,377 @@
+/* ============================================================
+   style.css — オリジナル時間割作成サイト
+   ============================================================ */
+
+/* ---------- Google Fonts ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&family=M+PLUS+1p:wght@400;700&display=swap');
+
+/* ---------- CSS Variables ---------- */
+:root {
+  --font-standard: 'Noto Sans JP', sans-serif;
+  --font-smart: 'M PLUS 1p', sans-serif;
+  --font-cute: 'Zen Maru Gothic', sans-serif;
+  --glass-bg: rgba(255, 255, 255, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-blur: 12px;
+  --cell-radius: 10px;
+  --text-color: #1a1a1a;
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  font-family: var(--font-standard);
+  color: var(--text-color);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ---------- Background Layer ---------- */
+#bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: #c0d8f0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ---------- Main Container ---------- */
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 10px 100px;
+}
+
+/* ---------- Title ---------- */
+.site-title {
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--cell-radius);
+  border: 1px solid var(--glass-border);
+  /* 長いタイトルでも中央に収まるように */
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Timetable Grid ---------- */
+#timetable-area {
+  width: 100%;
+}
+
+.timetable-grid {
+  display: grid;
+  grid-template-columns: 52px repeat(5, 1fr);
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+/* -- Header cells (曜日) -- */
+.cell-header {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 6px 2px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--cell-radius);
+  border: 1px solid var(--glass-border);
+}
+
+/* -- Period label cells (左端 時限) -- */
+.cell-period {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;          /* ★ 追加: 2行折り返し時も中央揃え */
+  font-size: 0.7rem;
+  line-height: 1.3;
+  padding: 4px 2px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--cell-radius);
+  border: 1px solid var(--glass-border);
+}
+
+.cell-period .period-num {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.cell-period .period-time {
+  font-size: 0.58rem;
+  line-height: 1.25;
+  text-align: center;          /* ★ 明示的に中央揃え */
+  word-break: keep-all;        /* ★ なるべく1行を維持 */
+  white-space: nowrap;         /* ★ 折り返さずに1行表示を試みる */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 画面幅が狭く1行に収まらない場合は折り返して中央揃え */
+@media (max-width: 374px) {
+  .cell-period .period-time {
+    white-space: normal;       /* 折り返し許可 */
+    word-break: break-all;
+  }
+}
+
+/* -- Subject cells -- */
+.cell-subject {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6px 3px;
+  min-height: 62px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--cell-radius);
+  border: 1px solid var(--glass-border);
+  transition: background 0.3s;
+}
+
+.cell-subject .subject-name {
+  font-weight: 700;
+  font-size: 0.82rem;
+  line-height: 1.2;
+}
+
+.cell-subject .subject-teacher,
+.cell-subject .subject-room {
+  font-size: 0.62rem;
+  opacity: 0.85;
+  line-height: 1.3;
+}
+
+/* -- Empty cell (火・木の7限目スペーサー) -- */
+.cell-empty {
+  visibility: hidden;
+}
+
+/* ---------- Settings Panel ---------- */
+#settings-toggle-btn {
+  display: block;
+  margin: 0 auto 10px;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  color: inherit;
+  transition: transform 0.2s;
+}
+
+#settings-toggle-btn:active {
+  transform: scale(0.96);
+}
+
+#settings-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 18px 14px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+#settings-panel.open {
+  display: block;
+}
+
+.setting-group {
+  margin-bottom: 16px;
+}
+
+.setting-group:last-child {
+  margin-bottom: 0;
+}
+
+.setting-group label,
+.setting-group .setting-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+
+.setting-group input[type="number"] {
+  width: 80px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.setting-group input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+.setting-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  background: #fff;
+}
+
+/* Font selector buttons */
+.font-options {
+  display: flex;
+  gap: 6px;
+}
+
+.font-options button {
+  flex: 1;
+  padding: 8px 4px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.5);
+  color: #333;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.font-options button.active {
+  border-color: #4a90d9;
+  background: rgba(74, 144, 217, 0.18);
+}
+
+.font-options button[data-font="standard"] { font-family: var(--font-standard); }
+.font-options button[data-font="smart"]    { font-family: var(--font-smart); }
+.font-options button[data-font="cute"]     { font-family: var(--font-cute); }
+
+/* Background options */
+.bg-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bg-options input[type="color"] {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.bg-options .img-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.bg-options .img-upload-label input {
+  display: none;
+}
+
+/* Opacity slider */
+input[type="range"] {
+  width: 100%;
+  accent-color: #4a90d9;
+}
+
+/* ---------- Action Buttons ---------- */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.action-buttons button {
+  flex: 1;
+  padding: 12px 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #4a90d9;
+  color: #fff;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.action-buttons button:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+}
+
+/* ---------- Font class overrides ---------- */
+body.font-standard { font-family: var(--font-standard); }
+body.font-smart    { font-family: var(--font-smart); }
+body.font-cute     { font-family: var(--font-cute); }
+
+/* ---------- Light / Dark text auto ---------- */
+body.text-light { --text-color: #ffffff; color: #ffffff; }
+body.text-dark  { --text-color: #1a1a1a; color: #1a1a1a; }
+
+body.text-light .cell-header,
+body.text-light .cell-period,
+body.text-light .cell-subject { color: #fff; }
+
+body.text-dark .cell-header,
+body.text-dark .cell-period,
+body.text-dark .cell-subject { color: #1a1a1a; }
+
+body.text-light #settings-toggle-btn { color: #fff; }
+body.text-dark  #settings-toggle-btn { color: #1a1a1a; }
+
+body.text-light .site-title { color: #fff; }
+body.text-dark  .site-title { color: #1a1a1a; }
+
+/* ---------- Utility ---------- */
+.hidden { display: none !important; }
+
+/* ---------- Screenshot helper ---------- */
+#timetable-area.capturing .cell-subject,
+#timetable-area.capturing .cell-header,
+#timetable-area.capturing .cell-period {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
