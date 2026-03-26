@@ -47,7 +47,7 @@ const BASE_TIMETABLE = {
   水_1: { subject: "英語", teacher: "高橋", room: "1-A教室" },
   水_2: { subject: "数学Ⅱ", teacher: "鈴木", room: "1-A教室" },
   水_3: { subject: "日本史", teacher: "山本", room: "1-A教室" },
-  水_4: { subject: "選択A", teacher: "-", room: "-" },   // ← 選択科目
+  水_4: { subject: "選択C", teacher: "-", room: "-" },   // ← 選択科目
   水_5: { subject: "体育", teacher: "渡辺", room: "体育館" },
   水_6: { subject: "音楽", teacher: "中村", room: "音楽室" },
   水_7: { subject: "現代文", teacher: "佐藤", room: "1-A教室" },
@@ -55,7 +55,7 @@ const BASE_TIMETABLE = {
   // ── 木曜日 ──
   木_1: { subject: "化学基礎", teacher: "伊藤", room: "化学室" },
   木_2: { subject: "数学Ⅱ", teacher: "鈴木", room: "1-A教室" },
-  木_3: { subject: "選択B", teacher: "-", room: "-" },   // ← 選択科目
+  木_3: { subject: "選択D", teacher: "-", room: "-" },   // ← 選択科目
   木_4: { subject: "英語", teacher: "高橋", room: "1-A教室" },
   木_5: { subject: "日本史", teacher: "山本", room: "1-A教室" },
   木_6: { subject: "LHR", teacher: "武谷", room: "2-8教室" },
@@ -74,14 +74,23 @@ const BASE_TIMETABLE = {
 //   "選択A" "選択B" は上のBASE_TIMETABLEで使ったラベル名と一致させる
 const ELECTIVE_OPTIONS = {
   選択A: {
-    美術: { subject: "美術", teacher: "小林", room: "美術室" },
-    書道: { subject: "書道", teacher: "加藤", room: "書道室" },
-    音楽選択: { subject: "音楽", teacher: "中村", room: "音楽室" },
+    物理: { subject: "理数物理", teacher: "網代", room: "物理講義室" },
+    生物: { subject: "理数生物", teacher: "奥山", room: "生物講義室" },
   },
   選択B: {
-    フランス語: { subject: "フランス語", teacher: "松田", room: "LL教室" },
-    中国語: { subject: "中国語", teacher: "李", room: "2-B教室" },
-    韓国語: { subject: "韓国語", teacher: "朴", room: "2-C教室" },
+    日本史: { subject: "日本史探究", teacher: "島本", room: "2-8教室" },
+    地理: { subject: "地理探究", teacher: "西山", room: "社会科教室" },
+  },
+    },
+  選択C: {
+    柔道: { subject: "柔道", teacher: "山元", room: "柔道場" },
+    剣道: { subject: "剣道", teacher: "有山", room: "剣道場" },
+    ダンス: { subject: "ダンス", teacher: "川原崎", room: "多目的" },
+  },
+    },
+  選択D: {
+    前半: { subject: "EW(前半)", teacher: "生田", room: "2-8教室" },
+    後半: { subject: "EW(後半)", teacher: "片岡", room: "展開東４" },
   },
 };
 
