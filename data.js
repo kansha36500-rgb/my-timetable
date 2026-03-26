@@ -81,13 +81,11 @@ const ELECTIVE_OPTIONS = {
     日本史: { subject: "日本史探究", teacher: "島本", room: "2-8教室" },
     地理: { subject: "地理探究", teacher: "西山", room: "社会科教室" },
   },
-    },
   選択C: {
     柔道: { subject: "柔道", teacher: "山元", room: "柔道場" },
     剣道: { subject: "剣道", teacher: "有山", room: "剣道場" },
     ダンス: { subject: "ダンス", teacher: "川原崎", room: "多目的" },
   },
-    },
   選択D: {
     前半: { subject: "EW(前半)", teacher: "生田", room: "2-8教室" },
     後半: { subject: "EW(後半)", teacher: "片岡", room: "展開東４" },
