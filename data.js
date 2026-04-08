@@ -50,7 +50,7 @@ const BASE_TIMETABLE = {
   水_3: { subject: "数学Ⅱ",     teacher: "武谷",     room: "2-8教室" },
   水_4: { subject: "選択体育",   teacher: "-",        room: "-" },
   水_5: { subject: "EW選択",     teacher: "-",        room: "-" },
-  水_6: { subject: "総合英語Ⅱ", teacher: "小島 Julian", room: "2-8教室" },
+  水_6: { subject: "総合英語Ⅱ", teacher: "小島,Julian", room: "2-8教室" },
   水_7: { subject: "情報Ⅰ",     teacher: "福山",     room: "LAN教室" },
 
   // ── 木曜日 ──
@@ -58,7 +58,7 @@ const BASE_TIMETABLE = {
   木_2: { subject: "総合英語Ⅱ", teacher: "小島",     room: "2-8教室" },
   木_3: { subject: "社会選択",   teacher: "-",        room: "-" },
   木_4: { subject: "数学B",      teacher: "栃谷",     room: "2-8教室" },
-  木_5: { subject: "総合的な探究", teacher: "武谷", room: "2-8教室" },
+  木_5: { subject: "探究", teacher: "武谷", room: "2-8教室" },
   木_6: { subject: "LHR",        teacher: "武谷",     room: "2-8教室" },
 
   // ── 金曜日 ──
@@ -76,12 +76,12 @@ const BASE_TIMETABLE = {
 //   値の中のキー: STUDENT_ELECTIVES で各生徒に割り当てる値と一致
 const ELECTIVE_OPTIONS = {
   体育α: {
-    体育男: { subject: "体育", teacher: "有山",   room: "ｸﾞﾗｳﾝﾄﾞ・体育館" },
-    体育女: { subject: "体育", teacher: "櫻",     room: "ｸﾞﾗｳﾝﾄﾞ・体育館" },
+    体育男: { subject: "体育", teacher: "有山",   room: "-" },
+    体育女: { subject: "体育", teacher: "櫻",     room: "-" },
   },
   体育β: {
-    体育男: { subject: "体育", teacher: "岡田泰", room: "ｸﾞﾗｳﾝﾄﾞ・体育館" },
-    体育女: { subject: "体育", teacher: "有山",   room: "ｸﾞﾗｳﾝﾄﾞ・体育館" },
+    体育男: { subject: "体育", teacher: "岡田泰", room: "-" },
+    体育女: { subject: "体育", teacher: "有山",   room: "-" },
   },
   理科選択: {
     理数物理: { subject: "理数物理", teacher: "網代", room: "物理講義室" },
