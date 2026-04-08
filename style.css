@@ -3,13 +3,12 @@
    ============================================================ */
 
 /* ---------- Google Fonts ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&family=M+PLUS+1p:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Hachi+Maru+Pop&display=swap');
 
 /* ---------- CSS Variables ---------- */
 :root {
-  --font-standard: 'Noto Sans JP', sans-serif;
-  --font-smart: 'M PLUS 1p', sans-serif;
-  --font-cute: 'Zen Maru Gothic', sans-serif;
+  --font-gothic: 'Noto Sans JP', sans-serif;
+  --font-maru: 'Hachi Maru Pop', cursive;
   --glass-bg: rgba(255, 255, 255, 0.35);
   --glass-border: rgba(255, 255, 255, 0.45);
   --glass-blur: 12px;
@@ -29,7 +28,7 @@ html {
 }
 
 body {
-  font-family: var(--font-standard);
+  font-family: var(--font-gothic);
   color: var(--text-color);
   min-height: 100dvh;
   overflow-x: hidden;
@@ -66,7 +65,6 @@ body {
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border-radius: var(--cell-radius);
   border: 1px solid var(--glass-border);
-  /* 長いタイトルでも中央に収まるように */
   word-break: break-all;
   overflow-wrap: anywhere;
 }
@@ -102,7 +100,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;          /* ★ 追加: 2行折り返し時も中央揃え */
+  text-align: center;
   font-size: 0.7rem;
   line-height: 1.3;
   padding: 4px 2px;
@@ -121,17 +119,16 @@ body {
 .cell-period .period-time {
   font-size: 0.58rem;
   line-height: 1.25;
-  text-align: center;          /* ★ 明示的に中央揃え */
-  word-break: keep-all;        /* ★ なるべく1行を維持 */
-  white-space: nowrap;         /* ★ 折り返さずに1行表示を試みる */
+  text-align: center;
+  word-break: keep-all;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* 画面幅が狭く1行に収まらない場合は折り返して中央揃え */
 @media (max-width: 374px) {
   .cell-period .period-time {
-    white-space: normal;       /* 折り返し許可 */
+    white-space: normal;
     word-break: break-all;
   }
 }
@@ -166,7 +163,7 @@ body {
   line-height: 1.3;
 }
 
-/* -- Empty cell (火・木の7限目スペーサー) -- */
+/* -- Empty cell -- */
 .cell-empty {
   visibility: hidden;
 }
@@ -274,9 +271,8 @@ body {
   background: rgba(74, 144, 217, 0.18);
 }
 
-.font-options button[data-font="standard"] { font-family: var(--font-standard); }
-.font-options button[data-font="smart"]    { font-family: var(--font-smart); }
-.font-options button[data-font="cute"]     { font-family: var(--font-cute); }
+.font-options button[data-font="gothic"] { font-family: var(--font-gothic); }
+.font-options button[data-font="maru"]   { font-family: var(--font-maru); }
 
 /* Background options */
 .bg-options {
@@ -343,9 +339,8 @@ input[type="range"] {
 }
 
 /* ---------- Font class overrides ---------- */
-body.font-standard { font-family: var(--font-standard); }
-body.font-smart    { font-family: var(--font-smart); }
-body.font-cute     { font-family: var(--font-cute); }
+body.font-gothic { font-family: var(--font-gothic); }
+body.font-maru   { font-family: var(--font-maru); }
 
 /* ---------- Light / Dark text auto ---------- */
 body.text-light { --text-color: #ffffff; color: #ffffff; }
