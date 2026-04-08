@@ -58,7 +58,7 @@ const BASE_TIMETABLE = {
   木_2: { subject: "総合英語Ⅱ", teacher: "小島",     room: "2-8教室" },
   木_3: { subject: "社会選択",   teacher: "-",        room: "-" },
   木_4: { subject: "数学B",      teacher: "栃谷",     room: "2-8教室" },
-  木_5: { subject: "総合的な探究の時間", teacher: "武谷", room: "2-8教室" },
+  木_5: { subject: "総合的な探究", teacher: "武谷", room: "2-8教室" },
   木_6: { subject: "LHR",        teacher: "武谷",     room: "2-8教室" },
 
   // ── 金曜日 ──
