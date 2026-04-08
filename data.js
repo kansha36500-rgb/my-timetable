@@ -76,12 +76,12 @@ const BASE_TIMETABLE = {
 //   値の中のキー: STUDENT_ELECTIVES で各生徒に割り当てる値と一致
 const ELECTIVE_OPTIONS = {
   体育α: {
-    体育男: { subject: "体育", teacher: "有山",   room: "グラウンド・体育館など" },
-    体育女: { subject: "体育", teacher: "櫻",     room: "グラウンド・体育館など" },
+    体育男: { subject: "体育", teacher: "有山",   room: "ｸﾞﾗｳﾝﾄﾞ・体育館" },
+    体育女: { subject: "体育", teacher: "櫻",     room: "ｸﾞﾗｳﾝﾄﾞ・体育館" },
   },
   体育β: {
-    体育男: { subject: "体育", teacher: "岡田泰", room: "グラウンド・体育館など" },
-    体育女: { subject: "体育", teacher: "有山",   room: "グラウンド・体育館など" },
+    体育男: { subject: "体育", teacher: "岡田泰", room: "ｸﾞﾗｳﾝﾄﾞ・体育館" },
+    体育女: { subject: "体育", teacher: "有山",   room: "ｸﾞﾗｳﾝﾄﾞ・体育館" },
   },
   理科選択: {
     理数物理: { subject: "理数物理", teacher: "網代", room: "物理講義室" },
@@ -97,8 +97,8 @@ const ELECTIVE_OPTIONS = {
     ダンス: { subject: "ダンス", teacher: "河原崎", room: "多目的" },
   },
   EW選択: {
-    EW前半: { subject: "EWⅠ（前半）", teacher: "生田", room: "2-8教室" },
-    EW後半: { subject: "EWⅠ（後半）", teacher: "片岡", room: "東4教室" },
+    EW前半: { subject: "EWⅠ", teacher: "生田", room: "2-8教室" },
+    EW後半: { subject: "EWⅠ", teacher: "片岡", room: "東４教室" },
   },
 };
 
