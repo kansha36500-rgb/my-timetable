@@ -41,7 +41,7 @@ const BASE_TIMETABLE = {
   火_2: { subject: "理科選択",   teacher: "-",        room: "-" },
   火_3: { subject: "数学Ⅱ",     teacher: "武谷",     room: "2-8教室" },
   火_4: { subject: "数学B",      teacher: "栃谷",     room: "2-8教室" },
-  火_5: { subject: "総合英語Ⅱ", teacher: "小島",     room: "2-8教室" },
+  火_5: { subject: "保健", teacher: "河原崎",     room: "2-8教室" },
   火_6: { subject: "社会選択",   teacher: "-",        room: "-" },
 
   // ── 水曜日 ──
